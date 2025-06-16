@@ -15,6 +15,7 @@ interface RegistrationEmailRequest {
   email: string;
   school: string;
   role: string;
+  subject?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,7 +25,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, school, role }: RegistrationEmailRequest = await req.json();
+    const { name, email, school, role, subject }: RegistrationEmailRequest = await req.json();
 
     console.log(`Sending registration email to ${email} for ${name}`);
 
@@ -61,6 +62,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <p style="margin: 5px 0;"><strong>Name:</strong> ${name}</p>
                 <p style="margin: 5px 0;"><strong>School:</strong> ${school}</p>
                 <p style="margin: 5px 0;"><strong>Role:</strong> ${role.charAt(0).toUpperCase() + role.slice(1).replace('-', ' ')}</p>
+                ${subject ? `<p style="margin: 5px 0;"><strong>Subject:</strong> ${subject.charAt(0).toUpperCase() + subject.slice(1)}</p>` : ''}
                 <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
               </div>
               

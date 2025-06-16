@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { toast } from 'sonner';
 import posthog from 'posthog-js';
@@ -17,7 +18,7 @@ interface FormData {
   phone: string;
   school: string;
   role: string;
-  teachers: string;
+  subject: string;
 }
 
 interface FormErrors {
@@ -26,6 +27,7 @@ interface FormErrors {
   phone?: string;
   school?: string;
   role?: string;
+  subject?: string;
 }
 
 const RegistrationForm = ({ registrationCount, setRegistrationCount }: RegistrationFormProps) => {
@@ -35,11 +37,36 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     phone: '',
     school: '',
     role: '',
-    teachers: ''
+    subject: ''
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Common subjects for teachers
+  const commonSubjects = [
+    'Mathematics',
+    'English',
+    'Science',
+    'Physics',
+    'Chemistry',
+    'Biology',
+    'History',
+    'Geography',
+    'Computer Science',
+    'Economics',
+    'Literature',
+    'French',
+    'Fine Arts',
+    'Physical Education',
+    'Music',
+    'Religious Studies',
+    'Social Studies',
+    'Agricultural Science',
+    'Technical Drawing',
+    'Home Economics',
+    'Other'
+  ];
 
   const sendWelcomeEmail = async (registrationData: FormData) => {
     try {
@@ -48,20 +75,19 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
           name: registrationData.name,
           email: registrationData.email,
           school: registrationData.school,
-          role: registrationData.role
+          role: registrationData.role,
+          subject: registrationData.subject
         }
       });
 
       if (error) {
         console.error('Error sending welcome email:', error);
-        // Don't throw error - registration already succeeded
         toast.error('Registration successful, but welcome email failed to send');
       } else {
         console.log('Welcome email sent successfully');
       }
     } catch (error) {
       console.error('Error calling email function:', error);
-      // Don't throw error - registration already succeeded
     }
   };
 
@@ -100,6 +126,11 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       newErrors.role = 'Please select your role';
     }
 
+    // Subject validation (only for teachers)
+    if (formData.role === 'teacher' && !formData.subject.trim()) {
+      newErrors.subject = 'Please select or enter your subject';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -131,7 +162,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     posthog.capture('registration_form_submitted', {
       school: formData.school,
       role: formData.role,
-      has_teachers_count: !!formData.teachers
+      subject: formData.role === 'teacher' ? formData.subject : null
     });
     
     if (!validateForm()) {
@@ -163,7 +194,8 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
             phone: formData.phone.trim(),
             school: formData.school.trim(),
             role: formData.role,
-            teachers: formData.teachers ? parseInt(formData.teachers) : 0
+            subject: formData.role === 'teacher' ? formData.subject.trim() : null,
+            teachers: 0 // Keep for compatibility with existing schema
           }
         ])
         .select();
@@ -180,7 +212,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
         posthog.capture('registration_successful', {
           school: formData.school,
           role: formData.role,
-          teachers_count: formData.teachers ? parseInt(formData.teachers) : 0,
+          subject: formData.role === 'teacher' ? formData.subject : null,
           registration_id: data[0].id
         });
 
@@ -197,7 +229,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
         });
         
         // Reset form
-        setFormData({ name: '', email: '', phone: '', school: '', role: '', teachers: '' });
+        setFormData({ name: '', email: '', phone: '', school: '', role: '', subject: '' });
         setErrors({});
         
         console.log('Registration successful:', data[0]);
@@ -227,23 +259,31 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     }
   };
 
-  const handleSelectChange = (value: string) => {
+  const handleSelectChange = (value: string, field: 'role' | 'subject') => {
     setFormData(prev => ({
       ...prev,
-      role: value
+      [field]: value,
+      // Clear subject when role changes to non-teacher
+      ...(field === 'role' && value !== 'teacher' && { subject: '' })
     }));
     
-    // Track role selection
-    posthog.capture('registration_role_selected', { role: value });
+    // Track selections
+    if (field === 'role') {
+      posthog.capture('registration_role_selected', { role: value });
+    } else if (field === 'subject') {
+      posthog.capture('registration_subject_selected', { subject: value });
+    }
     
-    // Clear role error when user selects
-    if (errors.role) {
+    // Clear error when user selects
+    if (errors[field]) {
       setErrors(prev => ({
         ...prev,
-        role: undefined
+        [field]: undefined
       }));
     }
   };
+
+  const isTeacher = formData.role === 'teacher';
 
   return (
     <section id="registration-form" className="relative py-20 bg-black text-white overflow-hidden">
@@ -364,7 +404,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                   </label>
                   <Select 
                     value={formData.role} 
-                    onValueChange={handleSelectChange} 
+                    onValueChange={(value) => handleSelectChange(value, 'role')} 
                     disabled={isSubmitting}
                   >
                     <SelectTrigger className={`w-full bg-black/50 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
@@ -386,22 +426,34 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                   )}
                 </div>
                 
-                <div>
-                  <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
-                    Number of Teachers to Invite
-                  </label>
-                  <input
-                    type="number"
-                    name="teachers"
-                    value={formData.teachers}
-                    onChange={handleChange}
-                    min="0"
-                    max="100"
-                    disabled={isSubmitting}
-                    className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    placeholder="Optional"
-                  />
-                </div>
+                {isTeacher && (
+                  <div>
+                    <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
+                      Subject You Teach *
+                    </label>
+                    <Select 
+                      value={formData.subject} 
+                      onValueChange={(value) => handleSelectChange(value, 'subject')} 
+                      disabled={isSubmitting}
+                    >
+                      <SelectTrigger className={`w-full bg-black/50 border rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
+                        errors.subject ? 'border-red-500/50 focus:border-red-400' : 'border-blue-500/30 focus:border-blue-400'
+                      }`}>
+                        <SelectValue placeholder="Select your subject" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-900 border border-blue-500/30 text-white max-h-60">
+                        {commonSubjects.map((subject) => (
+                          <SelectItem key={subject} value={subject.toLowerCase()}>
+                            {subject}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {errors.subject && (
+                      <p className="mt-1 text-sm text-red-400 font-mono">{errors.subject}</p>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-center pt-4">

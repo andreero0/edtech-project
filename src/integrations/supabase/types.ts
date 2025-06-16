@@ -18,6 +18,7 @@ export type Database = {
           phone: string
           role: string
           school: string
+          subject: string | null
           teachers: number | null
           updated_at: string
         }
@@ -29,6 +30,7 @@ export type Database = {
           phone: string
           role: string
           school: string
+          subject?: string | null
           teachers?: number | null
           updated_at?: string
         }
@@ -40,6 +42,7 @@ export type Database = {
           phone?: string
           role?: string
           school?: string
+          subject?: string | null
           teachers?: number | null
           updated_at?: string
         }
