@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -40,6 +39,30 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
 
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const sendWelcomeEmail = async (registrationData: FormData) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-registration-email', {
+        body: {
+          name: registrationData.name,
+          email: registrationData.email,
+          school: registrationData.school,
+          role: registrationData.role
+        }
+      });
+
+      if (error) {
+        console.error('Error sending welcome email:', error);
+        // Don't throw error - registration already succeeded
+        toast.error('Registration successful, but welcome email failed to send');
+      } else {
+        console.log('Welcome email sent successfully');
+      }
+    } catch (error) {
+      console.error('Error calling email function:', error);
+      // Don't throw error - registration already succeeded
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -142,6 +165,9 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       }
 
       if (data && data.length > 0) {
+        // Send welcome email
+        await sendWelcomeEmail(formData);
+
         // Update registration count
         setRegistrationCount(registrationCount + 1);
         
