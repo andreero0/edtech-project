@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import posthog from 'posthog-js';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
@@ -126,7 +127,15 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Track form submission attempt
+    posthog.capture('registration_form_submitted', {
+      school: formData.school,
+      role: formData.role,
+      has_teachers_count: !!formData.teachers
+    });
+    
     if (!validateForm()) {
+      posthog.capture('registration_form_validation_failed');
       toast.error('Please fix the form errors before submitting');
       return;
     }
@@ -138,6 +147,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       const emailExists = await checkEmailExists(formData.email);
       if (emailExists) {
         setErrors({ email: 'This email is already registered' });
+        posthog.capture('registration_duplicate_email', { email: formData.email });
         toast.error('This email address is already registered');
         setIsSubmitting(false);
         return;
@@ -160,11 +170,20 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
 
       if (error) {
         console.error('Supabase error:', error);
+        posthog.capture('registration_database_error', { error: error.message });
         toast.error('Registration failed. Please try again.');
         return;
       }
 
       if (data && data.length > 0) {
+        // Track successful registration
+        posthog.capture('registration_successful', {
+          school: formData.school,
+          role: formData.role,
+          teachers_count: formData.teachers ? parseInt(formData.teachers) : 0,
+          registration_id: data[0].id
+        });
+
         // Send welcome email
         await sendWelcomeEmail(formData);
 
@@ -185,6 +204,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       }
     } catch (error) {
       console.error('Registration error:', error);
+      posthog.capture('registration_unexpected_error', { error: String(error) });
       toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -212,6 +232,9 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       ...prev,
       role: value
     }));
+    
+    // Track role selection
+    posthog.capture('registration_role_selected', { role: value });
     
     // Clear role error when user selects
     if (errors.role) {
@@ -385,6 +408,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                 <Button
                   type="submit"
                   disabled={isSubmitting}
+                  onClick={() => posthog.capture('registration_submit_button_clicked')}
                   className="relative group bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-mono text-sm uppercase tracking-wider px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <div className="absolute inset-0 bg-blue-400/20 rounded-lg blur-xl group-hover:blur-2xl transition-all duration-300"></div>
