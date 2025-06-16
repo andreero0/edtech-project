@@ -1,90 +1,94 @@
 
 import { useState } from 'react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
+import AnimatedWord from './AnimatedWord';
 
 const FAQ = () => {
-  const [openItems, setOpenItems] = useState<number[]>([]);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqs = [
     {
-      question: "Is this really free?",
-      answer: "Yes, absolutely! This info session is completely free. We believe in giving educators the knowledge they need to make informed decisions about AI in their schools. There's no hidden costs or surprise charges."
+      question: "What neural pathways will be enhanced?",
+      answer: "Our AI systems optimize cognitive pathways for mathematics, sciences, languages, and critical thinking. Each student receives personalized neural enhancement protocols."
     },
     {
-      question: "Do we need technical expertise to attend?",
-      answer: "Not at all! This session is designed for educators of all technical backgrounds. We explain AI concepts in simple, practical terms that anyone can understand, regardless of their tech experience."
+      question: "How does the consciousness interface work?",
+      answer: "Through advanced machine learning algorithms, our AI adapts to each student's unique learning patterns, creating personalized educational experiences that evolve in real-time."
     },
     {
-      question: "Can multiple staff members from our school attend?",
-      answer: "Yes! We encourage school teams to attend together. You can register additional teachers using the form above. Group attendance often leads to better implementation and school-wide adoption."
+      question: "What quantum results can I expect?",
+      answer: "Schools typically see 5x-10x improvement in learning velocity, with 85% of students experiencing significant grade elevation within the first neural cycle."
     },
     {
-      question: "Will we receive materials after the session?",
-      answer: "Absolutely! All attendees will receive comprehensive follow-up materials including presentation slides, resource links, implementation guides, and access to our exclusive AI education toolkit."
+      question: "Is the neural link compatible with existing systems?",
+      answer: "Yes, our AI seamlessly integrates with current educational infrastructure while enhancing rather than replacing traditional teaching methods."
     },
     {
-      question: "How long is the session and what time zone?",
-      answer: "The session is 90 minutes long and conducted in West Africa Time (WAT). We'll send you the exact time and Zoom link 24 hours before the session."
-    },
-    {
-      question: "Will this work with our current curriculum?",
-      answer: "Yes! Our AI solutions are designed to enhance your existing curriculum, not replace it. We'll show you how to integrate AI tools seamlessly with WAEC, NECO, and JAMB preparation."
+      question: "What security protocols protect the data matrix?",
+      answer: "All student data is encrypted using quantum-level security protocols, ensuring complete privacy and compliance with educational data protection standards."
     }
   ];
 
-  const toggleItem = (index: number) => {
-    setOpenItems(prev => 
-      prev.includes(index) 
-        ? prev.filter(i => i !== index)
-        : [...prev, index]
-    );
+  const toggleFAQ = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
   };
 
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-green-900 mb-4">
-            Frequently Asked Questions
+    <section className="relative py-20 bg-black text-white overflow-hidden">
+      {/* Grid pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(96,165,250,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(96,165,250,0.05)_1px,transparent_1px)] bg-[size:80px_80px]"></div>
+      </div>
+
+      <div className="relative container mx-auto px-8 max-w-4xl">
+        <div className="text-center mb-16">
+          <h2 className="text-xs md:text-sm font-mono text-blue-300 uppercase tracking-[0.3em] mb-4">
+            <AnimatedWord delay={0}>Knowledge</AnimatedWord>
+            <AnimatedWord delay={150}>Database</AnimatedWord>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Everything you need to know about the AI Education Info Session
-          </p>
+          <div className="w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-8"></div>
+          <h3 className="text-3xl md:text-5xl font-extralight text-white text-glow leading-tight">
+            <AnimatedWord delay={300}>System</AnimatedWord>
+            <AnimatedWord delay={450}>Inquiries</AnimatedWord>
+          </h3>
         </div>
-        
-        <div className="max-w-3xl mx-auto">
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <Collapsible
-                key={index}
-                open={openItems.includes(index)}
-                onOpenChange={() => toggleItem(index)}
-              >
-                <CollapsibleTrigger className="w-full">
-                  <div className="bg-gradient-to-r from-green-50 to-amber-50 rounded-lg p-6 hover:shadow-md transition-all duration-200">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-green-900 text-left">
-                        {faq.question}
-                      </h3>
-                      <ChevronDown 
-                        className={`w-5 h-5 text-green-600 transition-transform duration-200 ${
-                          openItems.includes(index) ? 'transform rotate-180' : ''
-                        }`}
-                      />
-                    </div>
+
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <div key={index} className="relative group">
+              <div className="absolute inset-0 bg-blue-400/5 rounded-lg blur-xl group-hover:bg-blue-400/10 transition-all duration-500"></div>
+              <div className="relative bg-gray-900/40 backdrop-blur-sm border border-blue-500/20 rounded-lg overflow-hidden hover:border-blue-400/40 transition-all duration-300">
+                <button
+                  onClick={() => toggleFAQ(index)}
+                  className="w-full p-6 text-left flex items-center justify-between hover:bg-blue-500/5 transition-all duration-200"
+                >
+                  <h4 className="text-lg font-light text-blue-200 pr-4">{faq.question}</h4>
+                  {openIndex === index ? 
+                    <ChevronDown className="w-5 h-5 text-blue-400 flex-shrink-0" /> : 
+                    <ChevronRight className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                  }
+                </button>
+                
+                {openIndex === index && (
+                  <div className="px-6 pb-6">
+                    <div className="w-full h-px bg-gradient-to-r from-blue-500/30 to-transparent mb-4"></div>
+                    <p className="text-gray-300 font-light leading-relaxed">{faq.answer}</p>
                   </div>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="bg-white border border-green-100 rounded-lg p-6 mt-2">
-                    <p className="text-gray-700 leading-relaxed">
-                      {faq.answer}
-                    </p>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            ))}
-          </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <p className="text-blue-300 font-mono text-sm uppercase tracking-wider">
+            <AnimatedWord delay={1000}>Additional</AnimatedWord>
+            <AnimatedWord delay={1150}>queries</AnimatedWord>
+            <AnimatedWord delay={1300}>processed</AnimatedWord>
+            <AnimatedWord delay={1450}>during</AnimatedWord>
+            <AnimatedWord delay={1600}>neural</AnimatedWord>
+            <AnimatedWord delay={1750}>briefing</AnimatedWord>
+          </p>
         </div>
       </div>
     </section>
