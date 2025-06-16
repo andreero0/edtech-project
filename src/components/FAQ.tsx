@@ -8,24 +8,24 @@ const FAQ = () => {
 
   const faqs = [
     {
-      question: "What neural pathways will be enhanced?",
-      answer: "Our AI systems optimize cognitive pathways for mathematics, sciences, languages, and critical thinking. Each student receives personalized neural enhancement protocols."
+      question: "Is this really free?",
+      answer: "Yes! This interactive session is completely free. We believe every Nigerian school should have access to AI education insights to stay competitive globally."
     },
     {
-      question: "How does the consciousness interface work?",
-      answer: "Through advanced machine learning algorithms, our AI adapts to each student's unique learning patterns, creating personalized educational experiences that evolve in real-time."
+      question: "Do we need technical expertise to attend?",
+      answer: "Not at all! This session is designed for educators, not technicians. We explain AI concepts in simple, practical terms that any educator can understand and apply."
     },
     {
-      question: "What quantum results can I expect?",
-      answer: "Schools typically see 5x-10x improvement in learning velocity, with 85% of students experiencing significant grade elevation within the first neural cycle."
+      question: "Can multiple staff members from our school attend?",
+      answer: "Absolutely! We encourage bringing your entire team. The more educators from your school who attend, the better you can implement AI solutions together."
     },
     {
-      question: "Is the neural link compatible with existing systems?",
-      answer: "Yes, our AI seamlessly integrates with current educational infrastructure while enhancing rather than replacing traditional teaching methods."
+      question: "Will we receive materials after the session?",
+      answer: "Yes! All attendees will receive a comprehensive resource pack including session recordings, implementation guides, and ongoing support materials via email."
     },
     {
-      question: "What security protocols protect the data matrix?",
-      answer: "All student data is encrypted using quantum-level security protocols, ensuring complete privacy and compliance with educational data protection standards."
+      question: "How does this relate to WAEC and NECO exams?",
+      answer: "We'll show you how AI tools can specifically help students excel in WAEC, NECO, and JAMB examinations by personalizing learning paths and identifying knowledge gaps early."
     }
   ];
 
@@ -43,13 +43,14 @@ const FAQ = () => {
       <div className="relative container mx-auto px-8 max-w-4xl">
         <div className="text-center mb-16">
           <h2 className="text-xs md:text-sm font-mono text-blue-300 uppercase tracking-[0.3em] mb-4">
-            <AnimatedWord delay={0}>Knowledge</AnimatedWord>
+            <AnimatedWord delay={0}>Information</AnimatedWord>
             <AnimatedWord delay={150}>Database</AnimatedWord>
           </h2>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-8"></div>
           <h3 className="text-3xl md:text-5xl font-extralight text-white text-glow leading-tight">
-            <AnimatedWord delay={300}>System</AnimatedWord>
-            <AnimatedWord delay={450}>Inquiries</AnimatedWord>
+            <AnimatedWord delay={300}>Frequently</AnimatedWord>
+            <AnimatedWord delay={450}>Asked</AnimatedWord>
+            <AnimatedWord delay={600}>Questions</AnimatedWord>
           </h3>
         </div>
 
@@ -82,12 +83,15 @@ const FAQ = () => {
 
         <div className="text-center mt-12">
           <p className="text-blue-300 font-mono text-sm uppercase tracking-wider">
-            <AnimatedWord delay={1000}>Additional</AnimatedWord>
-            <AnimatedWord delay={1150}>queries</AnimatedWord>
-            <AnimatedWord delay={1300}>processed</AnimatedWord>
-            <AnimatedWord delay={1450}>during</AnimatedWord>
-            <AnimatedWord delay={1600}>neural</AnimatedWord>
-            <AnimatedWord delay={1750}>briefing</AnimatedWord>
+            <AnimatedWord delay={1000}>More</AnimatedWord>
+            <AnimatedWord delay={1150}>questions?</AnimatedWord>
+            <AnimatedWord delay={1300}>We'll</AnimatedWord>
+            <AnimatedWord delay={1450}>answer</AnimatedWord>
+            <AnimatedWord delay={1600}>them</AnimatedWord>
+            <AnimatedWord delay={1750}>live</AnimatedWord>
+            <AnimatedWord delay={1900}>during</AnimatedWord>
+            <AnimatedWord delay={2050}>the</AnimatedWord>
+            <AnimatedWord delay={2200}>session</AnimatedWord>
           </p>
         </div>
       </div>

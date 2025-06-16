@@ -13,7 +13,9 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     name: '',
     email: '',
     phone: '',
-    school: ''
+    school: '',
+    role: '',
+    teachers: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,15 +23,15 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     
     // Simulate registration
     setRegistrationCount(registrationCount + 1);
-    toast.success("Neural pathway established! You're connected to the network.", {
-      description: 'Check your communication channel for quantum details.',
+    toast.success("Registration successful! Welcome to the AI Education Revolution", {
+      description: 'Check your email for session details and preparation materials.',
     });
     
     // Reset form
-    setFormData({ name: '', email: '', phone: '', school: '' });
+    setFormData({ name: '', email: '', phone: '', school: '', role: '', teachers: '' });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -37,7 +39,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
   };
 
   return (
-    <section className="relative py-20 bg-black text-white overflow-hidden">
+    <section id="registration-form" className="relative py-20 bg-black text-white overflow-hidden">
       {/* Floating particles */}
       <div className="floating-particle" style={{top: '20%', left: '10%', animationDelay: '1s'}}></div>
       <div className="floating-particle" style={{top: '70%', left: '85%', animationDelay: '3s'}}></div>
@@ -46,16 +48,22 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       <div className="relative container mx-auto px-8 max-w-4xl">
         <div className="text-center mb-16">
           <h2 className="text-xs md:text-sm font-mono text-blue-300 uppercase tracking-[0.3em] mb-4">
-            <AnimatedWord delay={0}>Interface</AnimatedWord>
-            <AnimatedWord delay={150}>Connection</AnimatedWord>
-            <AnimatedWord delay={300}>Protocol</AnimatedWord>
+            <AnimatedWord delay={0}>Registration</AnimatedWord>
+            <AnimatedWord delay={150}>Portal</AnimatedWord>
           </h2>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-8"></div>
           <h3 className="text-3xl md:text-5xl font-extralight text-white text-glow leading-tight">
-            <AnimatedWord delay={500}>Establish</AnimatedWord>
-            <AnimatedWord delay={650}>neural</AnimatedWord>
-            <AnimatedWord delay={800}>connection</AnimatedWord>
+            <AnimatedWord delay={500}>Reserve</AnimatedWord>
+            <AnimatedWord delay={650}>Your</AnimatedWord>
+            <AnimatedWord delay={800}>Spot</AnimatedWord>
           </h3>
+          <p className="text-blue-200 font-light mt-4 text-lg">
+            <AnimatedWord delay={1000}>Limited</AnimatedWord>
+            <AnimatedWord delay={1150}>spaces</AnimatedWord>
+            <AnimatedWord delay={1300}>available</AnimatedWord>
+            <AnimatedWord delay={1450}>per</AnimatedWord>
+            <AnimatedWord delay={1600}>session</AnimatedWord>
+          </p>
         </div>
 
         <div className="relative">
@@ -65,7 +73,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
-                    Neural Identifier
+                    Full Name *
                   </label>
                   <input
                     type="text"
@@ -74,12 +82,12 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                     onChange={handleChange}
                     required
                     className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                    placeholder="Your designation"
+                    placeholder="Your full name"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
-                    Communication Channel
+                    Email Address *
                   </label>
                   <input
                     type="email"
@@ -88,12 +96,12 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                     onChange={handleChange}
                     required
                     className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                    placeholder="neural.link@domain.net"
+                    placeholder="your.email@domain.com"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
-                    Direct Access Code
+                    Phone Number (WhatsApp) *
                   </label>
                   <input
                     type="tel"
@@ -107,7 +115,7 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                 </div>
                 <div>
                   <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
-                    Institution Matrix
+                    School Name *
                   </label>
                   <input
                     type="text"
@@ -116,7 +124,41 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                     onChange={handleChange}
                     required
                     className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                    placeholder="Educational facility name"
+                    placeholder="Name of your school"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
+                    Your Role *
+                  </label>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                  >
+                    <option value="">Select your role</option>
+                    <option value="proprietor">Proprietor</option>
+                    <option value="principal">Principal</option>
+                    <option value="vice-principal">Vice Principal</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="it-coordinator">IT Coordinator</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
+                    Number of Teachers to Invite
+                  </label>
+                  <input
+                    type="number"
+                    name="teachers"
+                    value={formData.teachers}
+                    onChange={handleChange}
+                    min="0"
+                    className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
+                    placeholder="Optional"
                   />
                 </div>
               </div>
@@ -127,14 +169,17 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                   className="relative group bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-mono text-sm uppercase tracking-wider px-8 py-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25"
                 >
                   <div className="absolute inset-0 bg-blue-400/20 rounded-lg blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                  <span className="relative">Initialize Connection</span>
+                  <span className="relative">Secure My Free Spot Now</span>
                 </button>
               </div>
             </form>
 
             <div className="mt-8 pt-6 border-t border-blue-500/20 text-center">
-              <p className="text-xs font-mono text-blue-300/80 uppercase tracking-wider">
-                Active Connections: <span className="text-blue-300 font-semibold">{registrationCount}</span> Neural Pathways Established
+              <p className="text-xs font-mono text-blue-300/80 uppercase tracking-wider mb-2">
+                🔒 Your information is 100% secure and will never be shared
+              </p>
+              <p className="text-xs font-mono text-blue-300/60 uppercase tracking-wider">
+                Active Registrations: <span className="text-blue-300 font-semibold">{registrationCount}</span> Schools Joined
               </p>
             </div>
           </div>

@@ -12,28 +12,36 @@ const InfoSession = () => {
       <div className="relative container mx-auto px-8 max-w-4xl">
         <div className="text-center mb-12">
           <h2 className="text-xs md:text-sm font-mono text-blue-300 uppercase tracking-[0.3em] mb-4">
-            <AnimatedWord delay={0}>Initiation</AnimatedWord>
+            <AnimatedWord delay={0}>Learning</AnimatedWord>
             <AnimatedWord delay={150}>Protocol</AnimatedWord>
           </h2>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-8"></div>
           <h3 className="text-3xl md:text-5xl font-extralight text-white text-glow leading-tight mb-6">
-            <AnimatedWord delay={300}>Join</AnimatedWord>
-            <AnimatedWord delay={450}>the</AnimatedWord>
-            <AnimatedWord delay={600}>Neural</AnimatedWord>
-            <AnimatedWord delay={750}>Convergence</AnimatedWord>
+            <AnimatedWord delay={300}>What</AnimatedWord>
+            <AnimatedWord delay={450}>You'll</AnimatedWord>
+            <AnimatedWord delay={600}>Learn</AnimatedWord>
+            <AnimatedWord delay={750}>in</AnimatedWord>
+            <AnimatedWord delay={900}>This</AnimatedWord>
+            <AnimatedWord delay={1050}>FREE</AnimatedWord>
+            <AnimatedWord delay={1200}>Session</AnimatedWord>
           </h3>
-          <p className="text-xl text-blue-200 font-light leading-relaxed max-w-2xl mx-auto">
-            <AnimatedWord delay={900}>Experience</AnimatedWord>
-            <AnimatedWord delay={1050}>the</AnimatedWord>
-            <AnimatedWord delay={1200}>future</AnimatedWord>
-            <AnimatedWord delay={1350}>of</AnimatedWord>
-            <AnimatedWord delay={1500}>education</AnimatedWord>
-            <AnimatedWord delay={1650}>in</AnimatedWord>
-            <AnimatedWord delay={1800}>our</AnimatedWord>
-            <AnimatedWord delay={1950}>exclusive</AnimatedWord>
-            <AnimatedWord delay={2100}>digital</AnimatedWord>
-            <AnimatedWord delay={2250}>briefing</AnimatedWord>
-          </p>
+        </div>
+
+        <div className="mb-12 bg-gray-900/40 backdrop-blur-sm border border-blue-500/20 rounded-lg p-8">
+          <div className="space-y-4">
+            {[
+              "What AI really is - explained simply for educators",
+              "Global success stories of AI transforming education",
+              "The current AI landscape in Nigerian education", 
+              "Live demonstrations of AI tools for your classroom",
+              "Interactive Q&A and personalized recommendations"
+            ].map((item, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <div className="w-3 h-3 bg-blue-400 rounded-full mt-2 flex-shrink-0 animate-pulse"></div>
+                <p className="text-gray-300 font-light leading-relaxed">{item}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -48,13 +56,13 @@ const InfoSession = () => {
               icon: Clock,
               title: "Duration",
               value: "90 Minutes",
-              subtitle: "Deep Dive Protocol"
+              subtitle: "Interactive Workshop"
             },
             {
               icon: Users,
-              title: "Capacity",
-              value: "Limited Slots",
-              subtitle: "Elite Access Only"
+              title: "Format",
+              value: "Online via Zoom",
+              subtitle: "Join from anywhere in Nigeria"
             }
           ].map((item, index) => (
             <div key={index} className="text-center">
@@ -74,9 +82,9 @@ const InfoSession = () => {
         <div className="text-center">
           <div className="inline-block p-6 bg-gray-900/40 backdrop-blur-sm border border-blue-500/20 rounded-lg">
             <p className="text-blue-200 font-light mb-2">
-              🔒 <AnimatedWord delay={2500}>Secure</AnimatedWord> <AnimatedWord delay={2650}>transmission</AnimatedWord> <AnimatedWord delay={2800}>via</AnimatedWord> <AnimatedWord delay={2950}>encrypted</AnimatedWord> <AnimatedWord delay={3100}>Zoom</AnimatedWord> <AnimatedWord delay={3250}>portal</AnimatedWord>
+              🔒 <AnimatedWord delay={2500}>Secure</AnimatedWord> <AnimatedWord delay={2650}>access</AnimatedWord> <AnimatedWord delay={2800}>via</AnimatedWord> <AnimatedWord delay={2950}>encrypted</AnimatedWord> <AnimatedWord delay={3100}>Zoom</AnimatedWord> <AnimatedWord delay={3250}>portal</AnimatedWord>
             </p>
-            <p className="text-sm text-gray-400 font-mono">Access coordinates will be transmitted upon registration</p>
+            <p className="text-sm text-gray-400 font-mono">Session details will be sent to your email upon registration</p>
           </div>
         </div>
       </div>

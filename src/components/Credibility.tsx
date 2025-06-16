@@ -18,14 +18,13 @@ const Credibility = () => {
       <div className="relative container mx-auto px-8 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-xs md:text-sm font-mono text-blue-300 uppercase tracking-[0.3em] mb-4">
-            <AnimatedWord delay={0}>Validation</AnimatedWord>
+            <AnimatedWord delay={0}>Expertise</AnimatedWord>
             <AnimatedWord delay={150}>Matrix</AnimatedWord>
           </h2>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-8"></div>
           <h3 className="text-3xl md:text-5xl font-extralight text-white text-glow leading-tight">
-            <AnimatedWord delay={300}>Proven</AnimatedWord>
-            <AnimatedWord delay={450}>Neural</AnimatedWord>
-            <AnimatedWord delay={600}>Architecture</AnimatedWord>
+            <AnimatedWord delay={300}>Your</AnimatedWord>
+            <AnimatedWord delay={450}>Facilitators</AnimatedWord>
           </h3>
         </div>
 
@@ -34,20 +33,20 @@ const Credibility = () => {
             {
               icon: Shield,
               title: "500+ Schools",
-              subtitle: "Neural Network Nodes",
-              description: "Educational institutions across Nigeria integrated into our consciousness grid"
+              subtitle: "Already Exploring AI",
+              description: "Nigerian educational institutions discovering AI education transformation"
             },
             {
               icon: Award,
-              title: "85% Success Rate",
-              subtitle: "Grade Enhancement Protocol",
-              description: "Students experiencing significant performance elevation through AI integration"
+              title: "Nigerian Experts",
+              subtitle: "Based in Canada",
+              description: "Deep understanding of both Nigerian education and global AI trends"
             },
             {
               icon: Target,
-              title: "10x Faster Learning",
-              subtitle: "Cognitive Acceleration",
-              description: "Documented learning velocity increases through neural pathway optimization"
+              title: "EdTech Specialists",
+              subtitle: "AI Implementation",
+              description: "Specialized in bridging the global technology gap for African education"
             }
           ].map((item, index) => (
             <div key={index} className="text-center group">
@@ -65,25 +64,29 @@ const Credibility = () => {
         </div>
 
         <div className="text-center">
-          <div className="inline-block p-8 bg-gray-900/40 backdrop-blur-sm border border-blue-500/20 rounded-lg max-w-2xl">
-            <p className="text-blue-200 font-light text-lg leading-relaxed mb-4">
-              <AnimatedWord delay={1000}>"The</AnimatedWord>
-              <AnimatedWord delay={1150}>transformation</AnimatedWord>
-              <AnimatedWord delay={1300}>was</AnimatedWord>
-              <AnimatedWord delay={1450}>immediate.</AnimatedWord>
-              <AnimatedWord delay={1600}>Our</AnimatedWord>
-              <AnimatedWord delay={1750}>students</AnimatedWord>
-              <AnimatedWord delay={1900}>evolved</AnimatedWord>
-              <AnimatedWord delay={2050}>beyond</AnimatedWord>
-              <AnimatedWord delay={2200}>recognition."</AnimatedWord>
+          <div className="inline-block p-8 bg-gray-900/40 backdrop-blur-sm border border-blue-500/20 rounded-lg max-w-3xl">
+            <p className="text-blue-200 font-light text-lg leading-relaxed mb-6">
+              <AnimatedWord delay={1000}>Nigerian</AnimatedWord>
+              <AnimatedWord delay={1150}>education</AnimatedWord>
+              <AnimatedWord delay={1300}>experts</AnimatedWord>
+              <AnimatedWord delay={1450}>bringing</AnimatedWord>
+              <AnimatedWord delay={1600}>global</AnimatedWord>
+              <AnimatedWord delay={1750}>AI</AnimatedWord>
+              <AnimatedWord delay={1900}>expertise</AnimatedWord>
+              <AnimatedWord delay={2050}>home</AnimatedWord>
             </p>
-            <div className="flex items-center justify-center gap-4">
-              <div className="w-12 h-12 bg-blue-400/20 rounded-full flex items-center justify-center">
-                <div className="w-6 h-6 bg-blue-400 rounded-full"></div>
+            <div className="space-y-3 text-left max-w-2xl mx-auto">
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                <p className="text-gray-300 font-light">Based in Canada with deep understanding of Nigerian education system</p>
               </div>
-              <div className="text-left">
-                <p className="font-mono text-blue-300 text-sm">Dr. Adebayo Okonkwo</p>
-                <p className="text-gray-400 text-xs">Principal, Lagos Future Academy</p>
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                <p className="text-gray-300 font-light">Specialized in EdTech and AI implementation for African schools</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 bg-blue-400 rounded-full mt-2"></div>
+                <p className="text-gray-300 font-light">Committed to bridging the global technology gap in education</p>
               </div>
             </div>
           </div>

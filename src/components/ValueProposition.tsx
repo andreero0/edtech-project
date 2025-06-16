@@ -12,15 +12,19 @@ const ValueProposition = () => {
       <div className="relative container mx-auto px-8 max-w-6xl">
         <div className="text-center mb-16">
           <h2 className="text-xs md:text-sm font-mono text-blue-300 uppercase tracking-[0.3em] mb-4">
-            <AnimatedWord delay={0}>Neural</AnimatedWord>
-            <AnimatedWord delay={150}>Enhancement</AnimatedWord>
+            <AnimatedWord delay={0}>Educational</AnimatedWord>
+            <AnimatedWord delay={150}>Innovation</AnimatedWord>
             <AnimatedWord delay={300}>Protocol</AnimatedWord>
           </h2>
           <div className="w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent mx-auto mb-8"></div>
           <h3 className="text-3xl md:text-5xl font-extralight text-white text-glow leading-tight">
-            <AnimatedWord delay={500}>Transform</AnimatedWord>
-            <AnimatedWord delay={650}>student</AnimatedWord>
-            <AnimatedWord delay={800}>consciousness</AnimatedWord>
+            <AnimatedWord delay={500}>Why</AnimatedWord>
+            <AnimatedWord delay={650}>AI</AnimatedWord>
+            <AnimatedWord delay={800}>Education</AnimatedWord>
+            <AnimatedWord delay={950}>Matters</AnimatedWord>
+            <AnimatedWord delay={1100}>for</AnimatedWord>
+            <AnimatedWord delay={1250}>Nigerian</AnimatedWord>
+            <AnimatedWord delay={1400}>Schools</AnimatedWord>
           </h3>
         </div>
 
@@ -28,21 +32,21 @@ const ValueProposition = () => {
           {[
             {
               title: "C & D → A & B",
-              subtitle: "Grade Elevation",
-              description: "Watch failing students ascend to excellence through AI-powered learning pathways",
-              delay: 1000
+              subtitle: "Proven Results",
+              description: "Help C and D grade students achieve A and B level performance through AI-powered learning",
+              delay: 1600
             },
             {
-              title: "5x-10x Faster",
-              subtitle: "Learning Velocity",
-              description: "Accelerate comprehension beyond traditional educational boundaries",
-              delay: 1200
+              title: "Made for Nigeria",
+              subtitle: "Local Context",
+              description: "Solutions designed specifically for the Nigerian educational system and WAEC/NECO standards",
+              delay: 1800
             },
             {
-              title: "Personalized AI",
-              subtitle: "Neural Adaptation",
-              description: "Each student receives a unique AI tutor that evolves with their mind",
-              delay: 1400
+              title: "Stay Competitive",
+              subtitle: "Future-Ready",
+              description: "Don't let your school fall behind in the global AI education revolution",
+              delay: 2000
             }
           ].map((item, index) => (
             <div key={index} className="relative group">
