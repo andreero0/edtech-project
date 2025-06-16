@@ -65,10 +65,10 @@ const InfoSession = () => {
               subtitle: "Join from anywhere in Nigeria"
             }
           ].map((item, index) => (
-            <div key={index} className="text-center">
-              <div className="relative group">
+            <div key={index} className="text-center h-full">
+              <div className="relative group h-full">
                 <div className="absolute inset-0 bg-blue-400/20 rounded-lg blur-xl group-hover:blur-2xl transition-all duration-500"></div>
-                <div className="relative bg-gray-900/60 backdrop-blur-sm border border-blue-500/30 rounded-lg p-6 hover:border-blue-400/50 transition-all duration-300">
+                <div className="relative bg-gray-900/60 backdrop-blur-sm border border-blue-500/30 rounded-lg p-6 h-full hover:border-blue-400/50 transition-all duration-300 flex flex-col justify-center items-center min-h-[200px]">
                   <item.icon className="w-8 h-8 text-blue-400 mx-auto mb-4" />
                   <h4 className="font-mono text-sm text-blue-300 uppercase tracking-wider mb-2">{item.title}</h4>
                   <p className="text-2xl font-light text-white mb-1">{item.value}</p>

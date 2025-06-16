@@ -52,7 +52,7 @@ const Footer = () => {
           <div className="mt-8 pt-8 border-t border-blue-500/20">
             <p className="text-xs text-gray-500 font-mono uppercase tracking-wider">
               <AnimatedWord delay={2500}>©</AnimatedWord>
-              <AnimatedWord delay={2650}>2024</AnimatedWord>
+              <AnimatedWord delay={2650}>2025</AnimatedWord>
               <AnimatedWord delay={2800}>•</AnimatedWord>
               <AnimatedWord delay={2950}>AI</AnimatedWord>
               <AnimatedWord delay={3100}>Education</AnimatedWord>

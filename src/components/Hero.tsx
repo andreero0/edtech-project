@@ -58,28 +58,31 @@ const Hero = ({ registrationCount }: HeroProps) => {
         <div className="text-center max-w-4xl mx-auto mb-12">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-extralight leading-tight tracking-tight text-white text-glow mb-8">
             <div className="mb-6">
-              <AnimatedWord delay={800}>Transform</AnimatedWord>
-              <AnimatedWord delay={950}>Your</AnimatedWord>
-              <AnimatedWord delay={1100}>Students'</AnimatedWord>
+              <AnimatedWord delay={800}>Unlocking</AnimatedWord>
+              <AnimatedWord delay={950}>Educational</AnimatedWord>
+              <AnimatedWord delay={1100}>Excellence</AnimatedWord>
             </div>
             <div className="text-2xl md:text-3xl lg:text-4xl font-thin text-blue-200 leading-relaxed">
-              <AnimatedWord delay={1400}>Performance</AnimatedWord>
-              <AnimatedWord delay={1550}>with</AnimatedWord>
-              <AnimatedWord delay={1700}>AI-Powered</AnimatedWord>
-              <AnimatedWord delay={1850}>Education</AnimatedWord>
+              <AnimatedWord delay={1400}>with</AnimatedWord>
+              <AnimatedWord delay={1550}>Artificial</AnimatedWord>
+              <AnimatedWord delay={1700}>Intelligence</AnimatedWord>
+              <AnimatedWord delay={1850}>for</AnimatedWord>
+              <AnimatedWord delay={2000}>Nigerian</AnimatedWord>
+              <AnimatedWord delay={2150}>High</AnimatedWord>
+              <AnimatedWord delay={2300}>Schools</AnimatedWord>
             </div>
           </h1>
 
           <p className="text-lg md:text-xl text-blue-200 font-light leading-relaxed mb-8 max-w-3xl mx-auto">
-            <AnimatedWord delay={2000}>Join</AnimatedWord>
-            <AnimatedWord delay={2150}>Nigerian</AnimatedWord>
-            <AnimatedWord delay={2300}>educators</AnimatedWord>
-            <AnimatedWord delay={2450}>discovering</AnimatedWord>
-            <AnimatedWord delay={2600}>how</AnimatedWord>
-            <AnimatedWord delay={2750}>to</AnimatedWord>
-            <AnimatedWord delay={2900}>5x-10x</AnimatedWord>
-            <AnimatedWord delay={3050}>student</AnimatedWord>
-            <AnimatedWord delay={3200}>outcomes</AnimatedWord>
+            <AnimatedWord delay={2450}>Join</AnimatedWord>
+            <AnimatedWord delay={2600}>Nigerian</AnimatedWord>
+            <AnimatedWord delay={2750}>educators</AnimatedWord>
+            <AnimatedWord delay={2900}>discovering</AnimatedWord>
+            <AnimatedWord delay={3050}>how</AnimatedWord>
+            <AnimatedWord delay={3200}>to</AnimatedWord>
+            <AnimatedWord delay={3350}>5x-10x</AnimatedWord>
+            <AnimatedWord delay={3500}>student</AnimatedWord>
+            <AnimatedWord delay={3650}>outcomes</AnimatedWord>
           </p>
 
           {/* Central Focus Element */}
@@ -93,12 +96,12 @@ const Hero = ({ registrationCount }: HeroProps) => {
               onClick={scrollToForm}
               size="lg"
               className="bg-blue-500 hover:bg-blue-400 text-white font-light px-8 py-4 text-lg rounded-none border border-blue-400 backdrop-blur-sm bg-blue-500/20 hover:bg-blue-400/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(96,165,250,0.3)] opacity-0"
-              style={{animation: 'word-appear 1s ease-out forwards', animationDelay: '3.4s'}}
+              style={{animation: 'word-appear 1s ease-out forwards', animationDelay: '3.8s'}}
             >
               Reserve Your Free Spot
             </Button>
             
-            <div className="flex items-center gap-2 text-blue-300 font-mono text-sm opacity-0" style={{animation: 'word-appear 1s ease-out forwards', animationDelay: '3.8s'}}>
+            <div className="flex items-center gap-2 text-blue-300 font-mono text-sm opacity-0" style={{animation: 'word-appear 1s ease-out forwards', animationDelay: '4.2s'}}>
               <span>{registrationCount}+ Nigerian schools already registered</span>
             </div>
           </div>
@@ -108,12 +111,12 @@ const Hero = ({ registrationCount }: HeroProps) => {
         <div className="text-center">
           <div className="mb-4 w-20 h-px bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-50"></div>
           <h2 className="text-xs md:text-sm font-mono font-light text-blue-300 uppercase tracking-[0.3em] opacity-80">
-            <AnimatedWord delay={4000}>Free</AnimatedWord>
-            <AnimatedWord delay={4150}>Interactive</AnimatedWord>
-            <AnimatedWord delay={4300}>Session</AnimatedWord>
+            <AnimatedWord delay={4400}>Free</AnimatedWord>
+            <AnimatedWord delay={4550}>Interactive</AnimatedWord>
+            <AnimatedWord delay={4700}>Session</AnimatedWord>
           </h2>
           
-          <div className="mt-8 flex justify-center space-x-6 opacity-0" style={{animation: 'word-appear 1s ease-out forwards', animationDelay: '4.5s'}}>
+          <div className="mt-8 flex justify-center space-x-6 opacity-0" style={{animation: 'word-appear 1s ease-out forwards', animationDelay: '4.9s'}}>
             <div className="w-2 h-2 bg-blue-400 rounded-full opacity-60 animate-pulse"></div>
             <div className="w-2 h-2 bg-blue-300 rounded-full opacity-40 animate-pulse" style={{animationDelay: '0.5s'}}></div>
             <div className="w-2 h-2 bg-blue-400 rounded-full opacity-60 animate-pulse" style={{animationDelay: '1s'}}></div>

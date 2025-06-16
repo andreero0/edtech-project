@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AnimatedWord from './AnimatedWord';
 
 interface RegistrationFormProps {
@@ -31,10 +32,17 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     setFormData({ name: '', email: '', phone: '', school: '', role: '', teachers: '' });
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      role: value
     }));
   };
 
@@ -131,21 +139,19 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
                   <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
                     Your Role *
                   </label>
-                  <select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    required
-                    className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300"
-                  >
-                    <option value="">Select your role</option>
-                    <option value="proprietor">Proprietor</option>
-                    <option value="principal">Principal</option>
-                    <option value="vice-principal">Vice Principal</option>
-                    <option value="teacher">Teacher</option>
-                    <option value="it-coordinator">IT Coordinator</option>
-                    <option value="other">Other</option>
-                  </select>
+                  <Select value={formData.role} onValueChange={handleSelectChange} required>
+                    <SelectTrigger className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20 transition-all duration-300">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-900 border border-blue-500/30 text-white">
+                      <SelectItem value="proprietor">Proprietor</SelectItem>
+                      <SelectItem value="principal">Principal</SelectItem>
+                      <SelectItem value="vice-principal">Vice Principal</SelectItem>
+                      <SelectItem value="teacher">Teacher</SelectItem>
+                      <SelectItem value="it-coordinator">IT Coordinator</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <label className="block text-sm font-mono text-blue-300 uppercase tracking-wider mb-2">
