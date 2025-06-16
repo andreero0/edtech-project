@@ -1,7 +1,5 @@
-
 import { Button } from '@/components/ui/button';
 import AnimatedWord from './AnimatedWord';
-import ShaderBackground from './ShaderBackground';
 
 interface HeroProps {
   registrationCount: number;
@@ -15,11 +13,9 @@ const Hero = ({ registrationCount }: HeroProps) => {
   };
 
   return (
-    <section className="relative min-h-screen overflow-hidden bg-black text-white">
-      <ShaderBackground />
-      
+    <section className="relative min-h-screen overflow-hidden bg-transparent text-white">
       {/* Grid Overlay */}
-      <svg className="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      <svg className="absolute inset-0 w-full h-full pointer-events-none z-20" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
             <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(96,165,250,0.05)" strokeWidth="0.5"/>
@@ -40,12 +36,12 @@ const Hero = ({ registrationCount }: HeroProps) => {
       </svg>
 
       {/* Floating Particles */}
-      <div className="floating-particle" style={{top: '20%', left: '10%', animationDelay: '2s'}}></div>
-      <div className="floating-particle" style={{top: '60%', left: '85%', animationDelay: '3s'}}></div>
-      <div className="floating-particle" style={{top: '80%', left: '15%', animationDelay: '4s'}}></div>
-      <div className="floating-particle" style={{top: '30%', left: '90%', animationDelay: '5s'}}></div>
+      <div className="floating-particle z-20" style={{top: '20%', left: '10%', animationDelay: '2s'}}></div>
+      <div className="floating-particle z-20" style={{top: '60%', left: '85%', animationDelay: '3s'}}></div>
+      <div className="floating-particle z-20" style={{top: '80%', left: '15%', animationDelay: '4s'}}></div>
+      <div className="floating-particle z-20" style={{top: '30%', left: '90%', animationDelay: '5s'}}></div>
 
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-8 backdrop-overlay">
+      <div className="relative z-30 flex flex-col items-center justify-center min-h-screen p-8 backdrop-overlay">
         {/* Top Section */}
         <div className="text-center mb-12">
           <h2 className="text-xs md:text-sm font-mono font-light text-blue-300 uppercase tracking-[0.3em] opacity-80">
