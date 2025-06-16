@@ -1,12 +1,28 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from 'react';
+import Hero from '../components/Hero';
+import ValueProposition from '../components/ValueProposition';
+import InfoSession from '../components/InfoSession';
+import Credibility from '../components/Credibility';
+import RegistrationForm from '../components/RegistrationForm';
+import FAQ from '../components/FAQ';
+import Footer from '../components/Footer';
 
 const Index = () => {
+  const [registrationCount, setRegistrationCount] = useState(27);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+      <Hero registrationCount={registrationCount} />
+      <ValueProposition />
+      <InfoSession />
+      <Credibility />
+      <RegistrationForm 
+        registrationCount={registrationCount}
+        setRegistrationCount={setRegistrationCount}
+      />
+      <FAQ />
+      <Footer />
     </div>
   );
 };
