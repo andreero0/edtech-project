@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAnalytics } from '../hooks/useAnalytics';
+import { useRegistrationCount } from '../hooks/useRegistrationCount';
 import Hero from '../components/Hero';
 import ValueProposition from '../components/ValueProposition';
 import InfoSession from '../components/InfoSession';
@@ -11,8 +12,16 @@ import Footer from '../components/Footer';
 import ShaderBackground from '../components/ShaderBackground';
 
 const Index = () => {
-  const [registrationCount, setRegistrationCount] = useState(27);
+  const { data: liveRegistrationCount, isLoading } = useRegistrationCount();
+  const [registrationCount, setRegistrationCount] = useState(27); // Fallback to 27 initially
   const { trackPageView, trackEvent } = useAnalytics();
+
+  // Update registration count when live data is available
+  useEffect(() => {
+    if (liveRegistrationCount !== undefined) {
+      setRegistrationCount(liveRegistrationCount);
+    }
+  }, [liveRegistrationCount]);
 
   useEffect(() => {
     // Track page view when component mounts
