@@ -12,7 +12,7 @@ const Index = () => {
   const [registrationCount, setRegistrationCount] = useState(27);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 to-amber-50">
+    <div className="min-h-screen bg-black text-white">
       <Hero registrationCount={registrationCount} />
       <ValueProposition />
       <InfoSession />
