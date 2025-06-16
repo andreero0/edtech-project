@@ -28,8 +28,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Sending registration email to ${email} for ${name}`);
 
-    // Use a more generic sender address that can be updated when domain is verified
-    const fromAddress = "AI Education Revolution <noreply@yourdomain.com>";
+    // Use Resend's default domain that works immediately
+    const fromAddress = "AI Education Revolution <onboarding@resend.dev>";
     
     const emailResponse = await resend.emails.send({
       from: fromAddress,
