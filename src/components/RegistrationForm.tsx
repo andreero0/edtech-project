@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import posthog from 'posthog-js';
@@ -6,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 import AnimatedWord from './AnimatedWord';
+import { validateFormData } from '@/utils/inputValidation';
+import { registrationRateLimiter } from '@/utils/rateLimiting';
 
 interface RegistrationFormProps {
   registrationCount: number;
@@ -91,50 +92,6 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
     }
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
-
-    // Name validation
-    if (!formData.name.trim()) {
-      newErrors.name = 'Full name is required';
-    } else if (formData.name.trim().length < 2) {
-      newErrors.name = 'Name must be at least 2 characters long';
-    }
-
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email address is required';
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    // Phone validation
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone number is required';
-    } else if (formData.phone.replace(/\D/g, '').length < 10) {
-      newErrors.phone = 'Please enter a valid phone number';
-    }
-
-    // School validation
-    if (!formData.school.trim()) {
-      newErrors.school = 'School name is required';
-    }
-
-    // Role validation
-    if (!formData.role) {
-      newErrors.role = 'Please select your role';
-    }
-
-    // Subject validation (only for teachers)
-    if (formData.role === 'teacher' && !formData.subject.trim()) {
-      newErrors.subject = 'Please select or enter your subject';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const checkEmailExists = async (email: string): Promise<boolean> => {
     try {
       const { data, error } = await supabase
@@ -158,6 +115,14 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Rate limiting check
+    const identifier = `registration-${formData.email}`;
+    if (!registrationRateLimiter.isAllowed(identifier)) {
+      const remainingTime = Math.ceil(registrationRateLimiter.getRemainingTime(identifier) / 1000 / 60);
+      toast.error(`Too many registration attempts. Please try again in ${remainingTime} minutes.`);
+      return;
+    }
+    
     // Track form submission attempt
     posthog.capture('registration_form_submitted', {
       school: formData.school,
@@ -165,8 +130,34 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       subject: formData.role === 'teacher' ? formData.subject : null
     });
     
-    if (!validateForm()) {
+    // Enhanced validation with sanitization
+    const validation = validateFormData(formData);
+    
+    if (!validation.isValid) {
+      const errorMap: FormErrors = {};
+      validation.errors.forEach(error => {
+        if (error.includes('Name')) errorMap.name = error;
+        else if (error.includes('Email') || error.includes('email')) errorMap.email = error;
+        else if (error.includes('Phone') || error.includes('phone')) errorMap.phone = error;
+        else if (error.includes('School') || error.includes('school')) errorMap.school = error;
+      });
+      
+      setErrors(errorMap);
       posthog.capture('registration_form_validation_failed');
+      toast.error('Please fix the form errors before submitting');
+      return;
+    }
+
+    // Role validation
+    if (!formData.role) {
+      setErrors({ role: 'Please select your role' });
+      toast.error('Please fix the form errors before submitting');
+      return;
+    }
+
+    // Subject validation (only for teachers)
+    if (formData.role === 'teacher' && !formData.subject.trim()) {
+      setErrors({ subject: 'Please select or enter your subject' });
       toast.error('Please fix the form errors before submitting');
       return;
     }
@@ -175,26 +166,26 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
 
     try {
       // Check if email already exists
-      const emailExists = await checkEmailExists(formData.email);
+      const emailExists = await checkEmailExists(validation.sanitizedData.email);
       if (emailExists) {
         setErrors({ email: 'This email is already registered' });
-        posthog.capture('registration_duplicate_email', { email: formData.email });
+        posthog.capture('registration_duplicate_email', { email: validation.sanitizedData.email });
         toast.error('This email address is already registered');
         setIsSubmitting(false);
         return;
       }
 
-      // Submit to Supabase
+      // Submit to Supabase with sanitized data
       const { data, error } = await supabase
         .from('registrations')
         .insert([
           {
-            name: formData.name.trim(),
-            email: formData.email.toLowerCase().trim(),
-            phone: formData.phone.trim(),
-            school: formData.school.trim(),
-            role: formData.role,
-            subject: formData.role === 'teacher' ? formData.subject.trim() : null,
+            name: validation.sanitizedData.name,
+            email: validation.sanitizedData.email,
+            phone: validation.sanitizedData.phone,
+            school: validation.sanitizedData.school,
+            role: validation.sanitizedData.role,
+            subject: validation.sanitizedData.subject,
             teachers: 0 // Keep for compatibility with existing schema
           }
         ])
@@ -210,14 +201,14 @@ const RegistrationForm = ({ registrationCount, setRegistrationCount }: Registrat
       if (data && data.length > 0) {
         // Track successful registration
         posthog.capture('registration_successful', {
-          school: formData.school,
-          role: formData.role,
-          subject: formData.role === 'teacher' ? formData.subject : null,
+          school: validation.sanitizedData.school,
+          role: validation.sanitizedData.role,
+          subject: validation.sanitizedData.subject,
           registration_id: data[0].id
         });
 
-        // Send welcome email
-        await sendWelcomeEmail(formData);
+        // Send welcome email with sanitized data
+        await sendWelcomeEmail(validation.sanitizedData);
 
         // Update registration count
         setRegistrationCount(registrationCount + 1);

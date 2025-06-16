@@ -1,12 +1,13 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import PostHogProvider from "./components/PostHogProvider";
+import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
+import AdminLogin from "./pages/AdminLogin";
 import NotFound from "./pages/NotFound";
+import PostHogProvider from "./components/PostHogProvider";
 
 const queryClient = new QueryClient();
 
@@ -14,15 +15,16 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <PostHogProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+        <AuthProvider>
+          <Toaster />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </PostHogProvider>
   </QueryClientProvider>

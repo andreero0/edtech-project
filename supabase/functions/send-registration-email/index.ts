@@ -1,139 +1,219 @@
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-};
-
-interface RegistrationEmailRequest {
-  name: string;
-  email: string;
-  school: string;
-  role: string;
-  subject?: string;
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
-  if (req.method === "OPTIONS") {
-    return new Response(null, { headers: corsHeaders });
+// Rate limiting storage (in production, use Redis or similar)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+const isRateLimited = (identifier: string, maxRequests = 2, windowMs = 60000): boolean => {
+  const now = Date.now();
+  const entry = rateLimitStore.get(identifier);
+  
+  if (!entry || now > entry.resetTime) {
+    rateLimitStore.set(identifier, { count: 1, resetTime: now + windowMs });
+    return false;
+  }
+  
+  if (entry.count >= maxRequests) {
+    return true;
+  }
+  
+  entry.count++;
+  rateLimitStore.set(identifier, entry);
+  return false;
+};
+
+const sanitizeInput = (input: string): string => {
+  if (typeof input !== 'string') return '';
+  return input.trim().replace(/[<>]/g, '');
+};
+
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return emailRegex.test(email) && email.length <= 254;
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
   }
 
   try {
-    const { name, email, school, role, subject }: RegistrationEmailRequest = await req.json();
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    )
 
-    console.log(`Sending registration email to ${email} for ${name}`);
-
-    // Use Resend's default domain that works immediately
-    const fromAddress = "AI Education Revolution <onboarding@resend.dev>";
+    const { name, email, school, role, subject } = await req.json()
     
-    const emailResponse = await resend.emails.send({
-      from: fromAddress,
-      to: [email],
-      subject: "🎯 Welcome to the AI Education Revolution - Your Spot is Secured!",
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Welcome to AI Education Revolution</title>
-          </head>
-          <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 28px; font-weight: bold;">🚀 AI Education Revolution</h1>
-              <p style="color: #e0e7ff; margin: 10px 0 0 0; font-size: 16px;">Your journey into the future of education starts here</p>
+    // Input validation and sanitization
+    if (!name || !email || !school || !role) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required fields' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+
+    const sanitizedData = {
+      name: sanitizeInput(name),
+      email: sanitizeInput(email).toLowerCase(),
+      school: sanitizeInput(school),
+      role: sanitizeInput(role),
+      subject: subject ? sanitizeInput(subject) : null
+    };
+
+    // Validate email format
+    if (!validateEmail(sanitizedData.email)) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid email format' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      )
+    }
+
+    // Rate limiting by email
+    if (isRateLimited(sanitizedData.email)) {
+      return new Response(
+        JSON.stringify({ error: 'Too many email requests. Please try again later.' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 429 }
+      )
+    }
+
+    // Verify registration exists in database
+    const { data: registration, error: dbError } = await supabaseClient
+      .from('registrations')
+      .select('id, name, email, school, role, subject')
+      .eq('email', sanitizedData.email)
+      .single()
+
+    if (dbError || !registration) {
+      console.error('Registration verification failed:', dbError)
+      return new Response(
+        JSON.stringify({ error: 'Registration not found' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 404 }
+      )
+    }
+
+    // Prepare email content with role-specific information
+    let roleSpecificContent = '';
+    if (registration.role === 'teacher' && registration.subject) {
+      roleSpecificContent = `<p><strong>Subject:</strong> ${registration.subject}</p>`;
+    }
+
+    const resendApiKey = Deno.env.get('RESEND_API_KEY')
+    if (!resendApiKey) {
+      throw new Error('RESEND_API_KEY not configured')
+    }
+
+    const emailContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Welcome to the AI Education Revolution</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #3b82f6, #1e40af); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
+          .content { background: #f8fafc; padding: 30px; border-radius: 0 0 8px 8px; }
+          .info-box { background: white; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #3b82f6; }
+          .button { display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; margin: 10px 0; }
+          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>🎉 Registration Confirmed!</h1>
+            <p>Welcome to the AI Education Revolution</p>
+          </div>
+          
+          <div class="content">
+            <p>Dear ${registration.name},</p>
+            
+            <p>Thank you for registering for our exclusive AI Education workshop. Your registration has been successfully confirmed!</p>
+            
+            <div class="info-box">
+              <h3>Your Registration Details:</h3>
+              <p><strong>Name:</strong> ${registration.name}</p>
+              <p><strong>Email:</strong> ${registration.email}</p>
+              <p><strong>School:</strong> ${registration.school}</p>
+              <p><strong>Role:</strong> ${registration.role}</p>
+              ${roleSpecificContent}
             </div>
             
-            <div style="background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
-              <h2 style="color: #1f2937; margin-top: 0;">Welcome, ${name}! 🎉</h2>
-              
-              <p style="font-size: 16px; margin-bottom: 20px;">
-                <strong>Congratulations!</strong> Your spot has been successfully secured for the AI Education Revolution session.
-              </p>
-              
-              <div style="background: #f8fafc; padding: 20px; border-radius: 8px; border-left: 4px solid #3b82f6; margin: 20px 0;">
-                <h3 style="margin: 0 0 10px 0; color: #1e40af;">📋 Your Registration Details:</h3>
-                <p style="margin: 5px 0;"><strong>Name:</strong> ${name}</p>
-                <p style="margin: 5px 0;"><strong>School:</strong> ${school}</p>
-                <p style="margin: 5px 0;"><strong>Role:</strong> ${role.charAt(0).toUpperCase() + role.slice(1).replace('-', ' ')}</p>
-                ${subject ? `<p style="margin: 5px 0;"><strong>Subject:</strong> ${subject.charAt(0).toUpperCase() + subject.slice(1)}</p>` : ''}
-                <p style="margin: 5px 0;"><strong>Email:</strong> ${email}</p>
-              </div>
-              
-              <h3 style="color: #1f2937; margin-top: 25px;">🔥 What Happens Next?</h3>
-              <ul style="padding-left: 20px;">
-                <li style="margin-bottom: 8px;">We'll send you session details and preparation materials within 24 hours</li>
-                <li style="margin-bottom: 8px;">You'll receive a WhatsApp invitation to join our exclusive educator community</li>
-                <li style="margin-bottom: 8px;">Access to pre-session resources to maximize your learning experience</li>
-                <li style="margin-bottom: 8px;">Direct line to our AI education specialists for any questions</li>
-              </ul>
-              
-              <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f59e0b;">
-                <p style="margin: 0; font-weight: bold; color: #92400e;">
-                  💡 Pro Tip: Start thinking about specific challenges in your school that AI could help solve. We'll be diving deep into practical applications!
-                </p>
-              </div>
-              
-              <h3 style="color: #1f2937;">🎯 Session Preview:</h3>
-              <ul style="padding-left: 20px;">
-                <li style="margin-bottom: 8px;">Hands-on AI tools demonstration</li>
-                <li style="margin-bottom: 8px;">Personalized implementation strategies for your school</li>
-                <li style="margin-bottom: 8px;">Live Q&A with AI education experts</li>
-                <li style="margin-bottom: 8px;">Exclusive resources and templates</li>
-                <li style="margin-bottom: 8px;">Networking with forward-thinking educators</li>
-              </ul>
-              
-              <div style="text-align: center; margin: 30px 0;">
-                <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 15px 25px; border-radius: 8px; display: inline-block; font-weight: bold; font-size: 16px;">
-                  ✅ You're All Set! We'll Be In Touch Soon.
-                </div>
-              </div>
-              
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 25px 0;">
-              
-              <p style="font-size: 14px; color: #6b7280; text-align: center; margin-bottom: 5px;">
-                Questions? Reply to this email or contact us directly.
-              </p>
-              <p style="font-size: 14px; color: #6b7280; text-align: center; margin: 0;">
-                🔒 Your information is secure and will never be shared with third parties.
-              </p>
+            <h3>🚀 What's Next?</h3>
+            <ul>
+              <li>You will receive session details and joining instructions 24 hours before the workshop</li>
+              <li>Preparation materials will be shared via email</li>
+              <li>Make sure to add our email to your contacts to avoid missing important updates</li>
+            </ul>
+            
+            <h3>📋 Pre-Workshop Preparation</h3>
+            <p>To get the most out of your AI Education workshop experience:</p>
+            <ul>
+              <li>Ensure you have a stable internet connection</li>
+              <li>Prepare any questions about AI integration in education</li>
+              <li>Have a notebook ready for key insights and action items</li>
+            </ul>
+            
+            <div class="footer">
+              <p>If you have any questions, please don't hesitate to reach out.</p>
+              <p><strong>The AI Education Team</strong></p>
+              <p><em>Transforming Education Through Artificial Intelligence</em></p>
             </div>
-          </body>
-        </html>
-      `,
-    });
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
 
-    console.log("Registration email sent successfully:", emailResponse);
-
-    return new Response(JSON.stringify({ 
-      success: true, 
-      messageId: emailResponse.data?.id 
-    }), {
-      status: 200,
+    const emailRes = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        ...corsHeaders,
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${resendApiKey}`,
       },
-    });
-  } catch (error: any) {
-    console.error("Error in send-registration-email function:", error);
+      body: JSON.stringify({
+        from: 'AI Education <noreply@yourdomain.com>',
+        to: [registration.email],
+        subject: '🎉 Registration Confirmed - AI Education Workshop',
+        html: emailContent,
+      }),
+    })
+
+    if (!emailRes.ok) {
+      const error = await emailRes.text()
+      console.error('Resend API error:', error)
+      throw new Error('Failed to send email')
+    }
+
+    const emailData = await emailRes.json()
+    
     return new Response(
       JSON.stringify({ 
-        success: false, 
-        error: error.message 
+        success: true, 
+        message: 'Welcome email sent successfully',
+        emailId: emailData.id 
       }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
-    );
-  }
-};
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
 
-serve(handler);
+  } catch (error) {
+    console.error('Error in send-registration-email function:', error)
+    return new Response(
+      JSON.stringify({ 
+        error: 'Internal server error',
+        message: error.message 
+      }),
+      { 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 500 
+      }
+    )
+  }
+})
