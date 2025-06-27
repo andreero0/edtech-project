@@ -19,12 +19,12 @@ const App = () => (
     <PostHogProvider>
       <TooltipProvider>
         <AuthProvider>
-          <Toaster />
           <StagewiseToolbar 
             config={{
-              plugins: [ReactPlugin]
+              plugins: [ReactPlugin],
             }}
           />
+          <Toaster />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
