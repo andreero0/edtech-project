@@ -183,6 +183,7 @@ Modify form fields, validation rules, and submission handling.
 - Don't edit files in the `ui/` folder - these are pre-built components
 - Keep the `<AnimatedWord>` wrapper for text animations
 - The registration form connects to a Supabase database
+- **All third-party branding has been removed** - the project is now fully proprietary
 
 ## 🐛 Troubleshooting
 
