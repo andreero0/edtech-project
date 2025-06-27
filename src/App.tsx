@@ -9,6 +9,8 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import PostHogProvider from "./components/PostHogProvider";
+import { StagewiseToolbar } from "@stagewise/toolbar-react";
+import { ReactPlugin } from "@stagewise-plugins/react";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +20,11 @@ const App = () => (
       <TooltipProvider>
         <AuthProvider>
           <Toaster />
+          <StagewiseToolbar 
+            config={{
+              plugins: [ReactPlugin],
+            }}
+          />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
